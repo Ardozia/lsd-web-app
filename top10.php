@@ -1,10 +1,25 @@
 <?php 
-  session_start();
+ session_start();
 
-  // If there is no session active redirects to login
-  if (!isset($_SESSION["email"])){
-  Header("Location: login.php");
-  }
+ // If there is no session active redirects to login
+if (!isset($_SESSION["email"])){
+ Header("Location: login.php");
+}
+
+
+require("connection.php");
+
+$query = "select idproduct, p.name,
+photos,
+sum( quantity) qtd 
+from user u, product p, purchase pu
+where iduser = user_iduser and idproduct = product_idproduct
+group by idproduct, p.name, photos
+order by qtd desc
+limit 10";
+
+$results = mysqli_query($connection, $query);
+
 ?>
 
 <!doctype html>
@@ -23,6 +38,22 @@
 
     <div class="container">
         <h1 class="display-3">Os 10 mais vendidos</h1>
+
+        <div class="row row-cols-1 ">
+        <?php
+            foreach($results as $row){
+                $id =     $row["idproduct"];
+                $name =   $row["name"];
+                $image =  $row["photos"];
+
+                echo "<div class='col'>";
+                echo "  <p class='fs-6 my-0'><a href='productDetail.php?id=$id'>$name</a></p>";
+                echo "  <img class='mb-3' src='$image' />";
+                echo "</div>";
+            }
+
+        ?>
+        </div>
     
     </div>
     
