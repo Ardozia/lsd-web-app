@@ -1,99 +1,102 @@
 <?php
-  session_start();
+require "auth.php";
 
-    // If there is no session active redirects to login
-  if (!isset($_SESSION["email"])){
-    Header("Location: login.php");
-  }
+$noresults = false;
+$msgType = "";
 
+require "connection.php";
+// check if user is searching
+if (isset($_GET["submit"])) {
 
+  $searchString = $_GET["searchString"];
 
-  if (isset($_GET["submit"])){
-
-    require ("connection.php");
-
-    $searchTerm = $_GET["searchTerm"];
-    $query = "select 
-    product.name name, 
+  $query = "select
+      idproduct,
+      p.name pname, 
       photos, 
       price, 
-      FORMAT(price*1.23, 2) price_vat,
-    category.name category
-  from product, category
-  where category_idcategory = idcategory and product.name like '%$searchTerm%'";
+      price*1.23 price_vat, 
+      c.name cname 
+      from 
+        product p, category c
+      where
+        category_idcategory = idcategory and p.name like '%$searchString%' ";
 
-    $results = mysqli_query($connection, $query);
+  $result = mysqli_query($connection, $query);
 
+  if (mysqli_num_rows($result) == 0) {
+    // no results
+    $noresults = true;
+    $msgType = "info";
   }
-
+} else {
+  $result = [];
+}
 
 ?>
-
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Babs Site</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  </head>
-  <body>
 
-    <?php
-        require("header.php");
-    ?>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
 
-    <div class="container">
-        <h1 class="display-3">Pesquisa de produtos</h1>
-    
-        <form>
-        <div class="mb-3">
-        
-            <input type="text" class="form-control" id="searchTerm"
-            name="searchTerm"
-            aria-describedby="emailHelp">
-        </div>
-        
-        <button type="submit" class="btn btn-primary" name="submit">Search</button>
+<body>
+
+  <?php include "header.php"; ?>
+
+  <div class="container">
+    <h1>Nexio Search Page</h1>
+    <h3>Pesquisa de Produtos</h3>
+    <form>
+      <input class="form-control" name="searchString" placeholder="Pesquise aqui ..." value="<?php
+                                                                                              if (isset($searchString))
+                                                                                                echo $searchString;
+                                                                                              ?>" />
+      <button type="submit" class="btn btn-primary" name="submit">Pesquisar</button>
     </form>
 
-    <?php
-      if (isset($_GET["submit"])){
-        echo "<p class='display-5'>Resultados da pesquisa por <span class='fw-bold'>'$searchTerm'</span></p>";
-      }
-    ?>
+    <div class="alert alert-<?php echo $msgType; ?>">
+      <?php
+      if ($noresults)
+        echo "Sem resultados";
+      ?>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3">
 
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
-        <?php
-         if (isset($_GET["submit"])){
-            foreach($results as $row){
-                $name =   $row["name"];
-                $image =  $row["photos"];
-                $price =  $row["price"];
-                $price_vat = $row["price_vat"];
-                $category = $row["category"];
+      <!-- PHP para criar um ciclo de impressão de produtos -->
+      <?php
+      foreach ($result as $product) {
 
-                echo "<div class='col'>";
-                echo "  <p class='fs-6'>$name</p>";
-                echo "  <img src='$image' />";
-                echo "  <p>$price € ($price_vat €)</p>";
-                echo "  <p class='badge bg-secondary'>$category</p>";
-                echo "</div>";
-            }
-          }
+      ?>
+        <div class="card" style="">
+          <img src="<?php echo $product["photos"]; ?>" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title"><?php echo $product["pname"]; ?></h5>
+            <p class="badge text-bg-secondary"><?php echo $product["cname"]; ?></p>
+            <p class="card-text">Price:</p>
+            <p class="card-text"><?php echo round($product["price_vat"], 2) . "€ (" . $product["price"] . "€)"; ?></p>
 
-        ?>
+            <a href="productDetail.php?id=<?php echo $product["idproduct"]; ?>" class="btn btn-primary">Detalhes</a>
+          </div>
         </div>
 
-
-
+      <?php
+      }
+      ?>
     </div>
-    
-    <?php
-        require("footer.php");
-    ?>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-  </body>
+  </div>
+
+  <!-- Footer -->
+  <?php include "footer.php"; ?>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
 </html>

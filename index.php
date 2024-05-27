@@ -1,8 +1,15 @@
-<?php 
-    // Using php SESSIONS
-    // if user is logged in go to main, else go to login page
-    Header("Location: login.php");
+<?php
+    session_start();
 
-    // Se user session active
-    // Header("Location: main.php")
+    // se o utilizador está autenticado
+    if (isset($_SESSION["email"]))
+        $loggedin = true;
+    else
+        $loggedin = false;
+
+    if ($loggedin) {
+        Header("location: main.php");
+    } else {
+        Header("location: login.php");
+    }
 ?>

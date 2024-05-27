@@ -1,10 +1,12 @@
 <?php 
     session_start();
 
-    $_SESSION = [];
+    // reset $_SESSION
+    $_SESSION = array();
 
+    // destroi sessao em PHP
     session_destroy();
 
-    Header("Location: login.php");
-
+    // redirect to login
+    Header("Location: login.php")
 ?>

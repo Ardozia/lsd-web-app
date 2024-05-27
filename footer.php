@@ -1,5 +1,3 @@
-<footer>
-    <div class="container">
-        <p>Hello | Contactos | Instagram</p>
-    </div>
+<footer class="container-fluid bg-dark text-light">
+    <p class="m-0 p-3">Hello | Contactos | Instagram</p>
 </footer>

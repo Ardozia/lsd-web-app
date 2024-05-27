@@ -1,161 +1,189 @@
 <?php
 
+$msgType = "";
+$msg = "";
+$targetDir = "./images/avatars/";
+$image = "./images/default-avatar-icon.jpg";
+$name = "";
+$email = "";
+$pwd = "";
+$street = "";
+$nr = "";
+$postal = "";
+$country = "";
 
-$msg_error = "";
-$msg_success = "";
-$src = "https://www.pngall.com/wp-content/uploads/5/User-Profile-PNG-Clipart.png";
+// apenas para segundo momento - form submit
+if (isset($_POST["submit"])) {
 
-//Check if there is a form submit
-if (isset($_POST["submit"])){
+  require("connection.php");
 
-    require("connection.php");
+  // protected againts code injection
+  $name = mysqli_real_escape_string($connection, $_POST["username"]);
+  $email = $_POST["useremail"];
+  // encript user pwd with md5 algorithm
+  $pwd = md5($_POST["pwd"]);
+  $street = $_POST["street"];
+  $nr = $_POST["nr"];
+  $postal = $_POST["postal"];
+  $country = $_POST["country"];
 
+  // check if email is already registered
+  $query = "
+    select email 
+    from user 
+    where email = '$email'
+  ";
+  $result = mysqli_query($connection, $query);
+  if (mysqli_num_rows($result) > 0) {
+    $msgType = "danger";
+    $msg = "Email já se encontra registado";
+  } else {
 
+    // check user image avatar
+    if (
+      isset($_FILES["image"]) &&
+      $_FILES["image"]["tmp_name"] !== ""
+    ) {
 
-    $name = $_POST["name"];
-    // salt fortalece passwords "fracas"
-    $salt="#_123Abf%&"; // tem de ser usado no login
-    $password = md5($salt.$_POST["password"]); // ALERTA não se guardam passwords NÃO encriptadas
-    $email = $_POST["email"];
-    $street = $_POST["street"];
-    $streetnr = $_POST["streetnr"];
-    $postal = $_POST["postal"];
-    $country = $_POST["country"];
-    $avatar = ""; // atualizado no upload do avatar
-     
-    // Check if email is already registered
-    $query = "select email from user where email = '$email'";
-    $result = mysqli_query($connection, $query);
+      $target_file = $targetDir . basename($_FILES["image"]["name"]);
 
-    if (mysqli_num_rows($result) > 0) {
-        // email already registered
-        $msg_error = "<p class='alert alert-danger'>The email $email is already registered</p>";
-    } else {
+      // check if uploaded file is an image
+      $size = getimagesize($_FILES["image"]["tmp_name"]);
+      if ($size === false) {
+        $msgType = "danger";
+        $msg = "Imagem de perfil inválida";
+      } else {
 
-        // upload avatar
-        $target_dir = "avatars/";
-        $target_file = $target_dir . basename($_FILES["avatar"]["name"]);
+        // todo: check size of file
 
-        $avatar_upload = move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file);
+        // todo: change image resolution
 
-        if ($avatar_upload) {
-            $src = $target_file;
-            $avatar = $target_file;
+        $check = move_uploaded_file($_FILES["image"]["tmp_name"], $target_file);
+
+        if ($check) {
+          // upload ok
+          $image = $target_file;
+        } else {
+          $msgType = "danger";
+          $msg = "Erro ao carregar avatar";
         }
-
-
-        // create insert statement
-        $insertQuery = "insert into user (name, password, email, address_name, address_nr, address_postal_code, address_country, avatar, dt_created) values ('$name', '$password', '$email','$street', '$streetnr','$postal', '$country', '$avatar', CURRENT_TIMESTAMP)";
-
-        //echo $insertQuery;
-
-        // execute query 
-        try {
-            $result = mysqli_query($connection, $insertQuery);
-            if (!$result){
-                echo mysqli_error($connection);
-            }
-
-
-        } catch (Exception $e) {
-            //throw $th;
-            echo "Error ".$e->getMessage();
-        }
-
-        
-        $msg_success = '<div class="alert alert-success" role="alert">Hello '.$name.'. Welcome to Babs</div>';
-
+      }
     }
 
 
+    // insert into db
+    $query = "insert into store.user
+    (name, email, password, address_name, address_nr, address_postal_code, address_country, avatar) values ('$name', '$email','$pwd','$street','$nr','$postal','$country', '$image')";
 
+    //echo $query;
 
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+      $msgType = "danger";
+      $msg = "Erro ao criar user";
+    } else {
+      $msgType = "success";
+      $msg = "User criado";
+    }
+  }
+  //print_r($connection);
 }
-
-
 
 ?>
 
-
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Babs site</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-  </head>
-  <body>
-    <div class="container">
-    
-<div class="row justify-content-center">
-    <form method="post" enctype="multipart/form-data"  class="col-auto col-md-6">
 
-        <h1 class="display-5">Create an account</h1>
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signup User</title>
 
-        <?php
-            echo $msg_success;
-            echo $msg_error;    
-        ?>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-        <!-- Avatar -->
-        <img class="w-25" src="<?php echo $src; ?>" class="img-thumbnail" alt="...">
-        <div class="mb-3">
-            <label for="formFile" class="form-label">Upload your avatar</label>
-            <input class="form-control" type="file" id="avatar" name="avatar">
-        </div>
-        
-        <!-- Name -->
-        <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name">
-        </div>
-        <!-- Email -->
-        <div class="mb-3">
-            <label for="email" class="form-label">Email address</label>
-            <input type="email" class="form-control" id="email"
-            name="email"
-            aria-describedby="emailHelp">
-            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-        </div>
-        <!-- Password -->
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password">
-        </div>
-        <!-- CPassword -->
-        <div class="mb-3">
-            <label for="cpassword" class="form-label">Confirm Password</label>
-            <input type="password" class="form-control" id="cpassword" name="cpassword">
-        </div>
-        <!-- Street -->
-        <div class="mb-3">
-            <label for="street" class="form-label">Street</label>
-            <input type="text" class="form-control" id="street" name="street">
-        </div>
-        <!-- Street Nr -->
-        <div class="mb-3">
-            <label for="streetnr" class="form-label">Street Nr</label>
-            <input type="text" class="form-control" id="streetnr" name="streetnr">
-        </div>
-        <!-- Postal code -->
-        <div class="mb-3">
-            <label for="postal" class="form-label">Postal Code</label>
-            <input type="text" class="form-control" id="postal" name="postal">
+  <style type="text/css">
+    .card-img-top {
+      object-fit: cover;
+      width: 200px;
+      height: 200px;
+
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class='container'>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-12 col-lg-6">
+
+        <div class="card text-center p-3">
+
+          <div class="alert alert-<?php echo $msgType; ?>" role="alert">
+            <?php echo $msg; ?>
+          </div>
+
+          <form method="post" enctype="multipart/form-data">
+            <div>
+              <img class="img-thumbnail rounded-circle" src="<?php echo $image; ?>" />
+            </div>
+            <div class="input-group mb-3">
+              <label class="input-group-text" for="image">Avatar</label>
+              <input type="file" name="image" class="form-control" id="image">
+            </div>
+            <div class="mb-3">
+              <label for="name" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="username" name="username" aria-describedby="name of user" placeholder="Escreva aqui o seu nome ..." value="<?php echo $name; ?>">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" class="form-control" name="useremail" id="useremail" aria-describedby="emailHelp" value="<?php echo $email; ?>">
+              <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control" name="pwd" id="pwd" value="<?php echo $pwd; ?>">
+
+            </div>
+            <div>
+              <p class="fs-5">Morada</p>
+            </div>
+            <div class="d-flex">
+              <div class="mb-3">
+                <label for="name" class="form-label">Rua</label>
+                <input type="text" class="form-control" id="street" name="street" aria-describedby="street" placeholder="Rua ..." value="<?php echo $street; ?>">
+              </div>
+              <div class="mb-3">
+                <label for="nr" class="form-label">Nr</label>
+                <input type="text" class="form-control" id="nr" name="nr" aria-describedby="nr" placeholder="Nr ..." value="<?php echo $nr; ?>">
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="mb-3">
+                <label for="name" class="form-label">Código Postal</label>
+                <input type="text" class="form-control" id="postal" name="postal" aria-describedby="postal" placeholder="Codigo Postal ..." value="<?php echo $postal; ?>">
+              </div>
+              <div class="mb-3">
+                <label for="nr" class="form-label">País</label>
+                <input type="text" class="form-control" id="country" name="country" aria-describedby="country" placeholder="País ..." value="<?php echo $country; ?>">
+              </div>
+            </div>
+            <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+          </form>
+
         </div>
 
-        <!-- Country -->
-        <div class="mb-3">
-            <label for="country" class="form-label">Country</label>
-            <input type="text" class="form-control" id="country" name="country">
-        </div>
+      </div>
+      <div class="col"></div>
 
-        <button type="submit" class="btn btn-primary" name="submit">Sign up</button>
+    </div>
+  </div>
 
-    </form>
-</div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
 
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-  </body>
 </html>
