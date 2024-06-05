@@ -24,7 +24,7 @@ if (isset($_SESSION["name"])) {
             <a class="nav-link" href="./search.php">Pesquisa</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Categorias</a>
+            <a class="nav-link" href="./category.php">Categorias</a>
           </li>
 
           <?php if (isset($_SESSION["role"]) && $_SESSION["role"] == "admin") { ?>
