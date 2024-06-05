@@ -45,7 +45,7 @@ if (isset($_GET["submit"])) {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
-<body>
+<body class="vh-100 d-flex flex-column justify-content-between">
 
   <?php include "header.php"; ?>
 
