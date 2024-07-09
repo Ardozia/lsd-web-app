@@ -57,7 +57,7 @@ if (mysqli_num_rows($result) == 0) {
         </div>
         <div class="container">
             <div style="height: 200px;"></div>
-            <div id="list" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 my-3" data-masonry-='{"percentPosition": true }'>
+            <div id="list" class="row my-3" data-masonry='{"percentPosition": true }'>
 
             </div>
         </div>
@@ -71,21 +71,25 @@ if (mysqli_num_rows($result) == 0) {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
     <script>
-        // $('#list').masonry({
-        //     // options
-        //     itemSelector: '.card',
-        //     columnWidth: 200
-        // });
+        $(document).ready(function() {
 
-        $('#selectedCategory').on("change", function(e) {
+            let $list = $('#list').masonry({
+                initLayout: false
+            });
+            console.log($list)
 
-            $.get('categoryProducts.php', {
-                categoryId: e.target.value
-            }, function(data) {
-                $('#list').html(data)
+            $('#selectedCategory').on("change", function(e) {
+
+                $.get('categoryProducts.php', {
+                    categoryId: e.target.value
+                }, function(data) {
+                    $('#list').html(data)
+                    $list.layout()
+                })
+
             })
 
-        })
+        });
     </script>
 </body>
 

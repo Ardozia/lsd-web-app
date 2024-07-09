@@ -36,7 +36,7 @@ if (isset($_GET["categoryId"])) {
 foreach ($result as $product) {
 
 ?>
-    <div class="col my-2">
+    <div class="col-sm-6 col-lg-4 mb-4">
         <div class="card ">
             <img src="<?php echo $product["photos"]; ?>" class="card-img-top" alt="...">
             <div class="card-body">
