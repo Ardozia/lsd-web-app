@@ -2,7 +2,7 @@
 require "auth.php";
 
 $targetDir = "./images/products/";
-$id = 0;
+$idproduct = 0;
 
 $name = "";
 $price = "";
@@ -21,14 +21,14 @@ if (isset($_POST["submit"])) {
   $name = mysqli_real_escape_string($connection, $_POST["prodname"]);
   $price = mysqli_real_escape_string($connection, $_POST["prodprice"]);
   $category = mysqli_real_escape_string($connection, $_POST["prodcategory"]);
-  $id = mysqli_real_escape_string($connection, $_POST["prodid"]);
+  $idproduct = mysqli_real_escape_string($connection, $_POST["prodid"]);
   $image = mysqli_real_escape_string($connection, $_POST["prodImageUpdate"]);
 
   // Ler product image
   if (isset($_FILES["prodimage"])) {
     if ($_FILES["prodimage"]["tmp_name"] !== "") {
 
-      $target_file = $targetDir . $id . "-" . basename($_FILES["prodimage"]["name"]);
+      $target_file = $targetDir . $idproduct . "-" . basename($_FILES["prodimage"]["name"]);
 
       // check if uploaded file is an image
       $size = getimagesize($_FILES["prodimage"]["tmp_name"]);
@@ -57,17 +57,16 @@ if (isset($_POST["submit"])) {
   if ($msgType != "danger") {
     // se existe id vamos fazer update
     // mode update
-    if ($id > 0) {
+    if ($idproduct > 0) {
       $query = "update product 
                 set 
                 name = '$name',
                 price = $price,
                 category_idcategory = $category,
                 photos = '$image'
-                where idproduct = $id";
+                where idproduct = $idproduct";
 
       mysqli_query($connection, $query);
-
       if (mysqli_affected_rows($connection) == 1) {
         // sucesso
         $msg = "Produto atualizado com sucesso";
@@ -87,7 +86,7 @@ if (isset($_POST["submit"])) {
 
       mysqli_query($connection, $query);
       // obtem id do produto criado
-      $id = mysqli_insert_id($connection);
+      $idproduct = mysqli_insert_id($connection);
 
       if (mysqli_affected_rows($connection) == 1) {
         // sucesso
@@ -105,13 +104,12 @@ if (isset($_POST["submit"])) {
 // mode de edit from productDetail
 if (isset($_GET["id"])) {
 
-  $id = $_GET["id"];
+  $idproduct = $_GET["id"];
   // query db for product id
   $query = "select name, price, category_idcategory, photos
-    from product where idproduct = $id";
+    from product where idproduct = $idproduct";
   $resultProduct = mysqli_query($connection, $query);
   $product = mysqli_fetch_assoc($resultProduct);
-
   $name = $product["name"];
   $price = $product["price"];
   $category = $product["category_idcategory"];
@@ -158,7 +156,7 @@ if (isset($_GET["id"])) {
       <div class="row">
         <div class="col-md">
           <div class="mb-3">
-            <input type="hidden" id="prodid" name="prodid" class="form-control" required value="<?php echo $id; ?>" />
+            <input type="hidden" id="prodid" name="prodid" class="form-control" required value="<?php echo $idproduct; ?>" />
             <label for="prodname" class="form-label">Nome do produto</label>
             <input type="text" id="prodname" name="prodname" class="form-control" required value="<?php echo $name; ?>" />
           </div>
@@ -190,7 +188,7 @@ if (isset($_GET["id"])) {
       </div>
       <button type="submit" class="btn btn-primary" name="submit">
         <?php
-        if ($id > 0)
+        if ($idproduct > 0)
           echo "Atualizar";
         else
           echo "Criar"; ?>
