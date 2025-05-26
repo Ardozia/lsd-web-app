@@ -27,9 +27,10 @@ if (mysqli_num_rows($result) == 0) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* .card img {
-            height: 100px;
-        } */
+        .catdiv {
+            background-image: url(images/categories/default-category-image.jpg);
+            background-size: cover;
+        }
     </style>
 </head>
 
@@ -38,7 +39,7 @@ if (mysqli_num_rows($result) == 0) {
     <?php include "./components/header.php"; ?>
 
     <div class="container-fluid flex-grow-1 p-0">
-        <div class="position-fixed p-3 z-3 bg-body-secondary w-100 s-0" style="clip-path: polygon(0 0, 100% 0%, 100% 80%, 0% 100%);">
+        <div class="catdiv position-fixed p-3 z-3 bg-body-secondary w-100 s-0" style="clip-path: polygon(0 0, 100% 0%, 100% 80%, 0% 100%);">
             <h1>Nexio - Categorias</h1>
             <h3>Lista de Produtos</h3>
             <form class="w-25">
