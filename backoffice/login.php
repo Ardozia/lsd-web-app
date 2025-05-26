@@ -101,7 +101,7 @@ if (isset($_POST["submit"])) {
             <?php echo $msg; ?>
           </div>
           <div>
-            <p class="fs-1">Welcome to Nexio</p>
+            <p class="fs-1">Welcome to Nexio Backoffice</p>
             <p class="fs-6">Please login</p>
           </div>
           <form method="post" enctype="multipart/form-data">
