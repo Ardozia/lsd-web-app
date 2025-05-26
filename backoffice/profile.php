@@ -1,19 +1,17 @@
 <?php
-require "auth.php";
-
-// import connection.php file
-require("connection.php");
+require("../components/auth.php");
+require("../components/connection.php");
 
 //mysqli_close($connection);
 
-if (!isset($_GET["id"])) {
-  echo "User inválido";
-  exit;
-};
+if (isset($_SESSION["id"])) {
+  // sanitizing
+  $userid = mysqli_real_escape_string($connection, $_SESSION["id"]);
+} else {
 
-
-
-$userid = $_GET["id"];
+  // redireccionar para pagina de erro
+  Header("location: error.php");
+}
 
 $query = "SELECT iduser, name, email, avatar, address_name, address_nr, address_postal_code, address_country FROM store.user where iduser = $userid";
 
@@ -59,7 +57,7 @@ $user = mysqli_fetch_assoc($result);
 </head>
 
 <body>
-  <?php include "header.php"; ?>
+  <?php include "../components/header.php"; ?>
 
   <div class='container'>
     <div class="row">
@@ -96,7 +94,7 @@ $user = mysqli_fetch_assoc($result);
     </div>
   </div>
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "../components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

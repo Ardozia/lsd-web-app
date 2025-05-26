@@ -1,10 +1,10 @@
 <?php
-require "auth.php";
+require "./components/auth.php";
+require "./components/connection.php";
 
 $noresults = false;
 $msgType = "";
 
-require "connection.php";
 // check if user is searching
 if (isset($_GET["submit"])) {
 
@@ -47,7 +47,7 @@ if (isset($_GET["submit"])) {
 
 <body class="vh-100 d-flex flex-column justify-content-between">
 
-  <?php include "header.php"; ?>
+  <?php include "./components/header.php"; ?>
 
   <div class="container">
     <h1>Nexio Search Page</h1>
@@ -97,7 +97,7 @@ if (isset($_GET["submit"])) {
   </div>
 
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "./components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"

@@ -1,15 +1,15 @@
 <?php
-require "auth.php";
+require "./components/auth.php";
+require "./components/connection.php";
 
 $msg = "";
 $msgType = "";
-require "connection.php";
 
 // if delete submit
 if (isset($_POST["submit"])) {
   $id = $_POST["idToDelete"];
 
-  $query = "delete from product where idproduct = $id";
+  $query = "update product set available = 0 where idproduct = $id";
   mysqli_query($connection, $query);
 
   if (mysqli_affected_rows($connection) == 1) {
@@ -32,6 +32,7 @@ $query = "select
     from 
       product p, category c
     where
+      available = 1 and
       category_idcategory = idcategory";
 
 $result = mysqli_query($connection, $query);
@@ -50,7 +51,7 @@ $result = mysqli_query($connection, $query);
 
 <body>
 
-  <?php include "header.php"; ?>
+  <?php include "./components/header.php"; ?>
 
   <div class="container">
 
@@ -104,7 +105,7 @@ $result = mysqli_query($connection, $query);
 
   </div>
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "./components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

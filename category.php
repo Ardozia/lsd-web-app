@@ -1,6 +1,6 @@
 <?php
-require "auth.php";
-require "connection.php";
+require("./components/auth.php");
+require("./components/connection.php");
 
 $query = "select
   idcategory,
@@ -35,7 +35,7 @@ if (mysqli_num_rows($result) == 0) {
 
 <body class="vh-100 d-flex flex-column">
 
-    <?php include "header.php"; ?>
+    <?php include "./components/header.php"; ?>
 
     <div class="container-fluid flex-grow-1 p-0">
         <div class="position-fixed p-3 z-3 bg-body-secondary w-100 s-0" style="clip-path: polygon(0 0, 100% 0%, 100% 80%, 0% 100%);">
@@ -57,26 +57,24 @@ if (mysqli_num_rows($result) == 0) {
         </div>
         <div class="container">
             <div style="height: 200px;"></div>
-            <div id="list" class="row my-3" data-masonry='{"percentPosition": true }'>
+            <div id="list" class="row g-2 row-cols-1 row-cols-md-2 row-cols-xl-3">
 
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <?php include "footer.php"; ?>
+    <?php include "./components/footer.php"; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!-- Masonry plugin -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
     <script>
         $(document).ready(function() {
 
-            let $list = $('#list').masonry({
-                initLayout: false
-            });
-            console.log($list)
+            var msnry;
 
             $('#selectedCategory').on("change", function(e) {
 
@@ -84,7 +82,17 @@ if (mysqli_num_rows($result) == 0) {
                     categoryId: e.target.value
                 }, function(data) {
                     $('#list').html(data)
-                    $list.layout()
+
+                    msnry = new Masonry('#list', {
+                        itemSelector: '.col',
+                        percentPosition: true
+                    });
+
+                    // Refresh after images load
+                    imagesLoaded('#list', function() {
+                        msnry.layout();
+                    });
+
                 })
 
             })

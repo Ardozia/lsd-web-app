@@ -1,9 +1,8 @@
 <?php
-require "auth.php";
+require("../components/auth.php");
+require("../components/connection.php");
 
-require("connection.php");
-
-$query = "select iduser, name, email from store.user";
+$query = "select idcategory, name from category";
 
 $result = mysqli_query($connection, $query);
 
@@ -35,31 +34,30 @@ $result = mysqli_query($connection, $query);
 </head>
 
 <body>
-  <?php include "header.php"; ?>
+  <?php include "../components/header.php"; ?>
 
   <div class='container'>
     <div class="row">
       <div class="col-12 col-lg-6">
-        <h2>Lista de users </h2>
+        <h2>Lista de categorias </h2>
         <div>
           <table class="table">
             <thead>
               <tr>
                 <th scope="col">Nome</th>
-                <th scope="col">Email</th>
+                <th scope="col">Editar</th>
               </tr>
             </thead>
             <tbody>
               <?php
               // create link for users
-              foreach ($result as $user) {
-                $name = $user["name"];
-                $email = $user["email"];
+              foreach ($result as $cat) {
+                $idcat = $cat["idcategory"];
+                $name = $cat["name"];
 
-                $id = $user["iduser"];
                 echo "<tr>";
-                echo "  <td><a href='./profile.php?id=$id'>$name</a></td>";
-                echo "  <td>$email</td>";
+                echo "  <td>$name</td>";
+                echo "  <td><a href='./upsertCategory.php?id=$idcat'>Editar</a> <a href='./upsertCategory.php?id=$idcat'>Eliminar</a></td>";
                 //echo "  <td>$depart</td>";
                 echo "</tr>";
               };
@@ -75,7 +73,7 @@ $result = mysqli_query($connection, $query);
   </div>
 
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "../components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

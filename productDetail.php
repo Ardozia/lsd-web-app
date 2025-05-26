@@ -1,5 +1,7 @@
 <?php
-require "auth.php";
+require("./components/auth.php");
+require("./components/connection.php");
+
 
 $id = $_GET["id"];
 // Validações
@@ -7,8 +9,6 @@ $id = $_GET["id"];
 if (!isset($id)) {
   Header("Location: main.php");
 }
-
-require "connection.php";
 
 // id do produto a consultar o detalhe
 
@@ -76,7 +76,7 @@ $date = $product["pdt"];
 </head>
 
 <body>
-  <?php include "header.php"; ?>
+  <?php include "./components/header.php"; ?>
 
   <div class='container-fluid'>
     <div class="container">
@@ -106,7 +106,7 @@ $date = $product["pdt"];
 
   </div>
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "./components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

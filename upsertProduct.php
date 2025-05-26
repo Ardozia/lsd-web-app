@@ -1,5 +1,6 @@
 <?php
-require "auth.php";
+require "./components/auth.php";
+require "./components/connection.php";
 
 $targetDir = "./images/products/";
 $idproduct = 0;
@@ -12,7 +13,6 @@ $image = "./images/default-image.jpg";
 $msg = "";
 $msgType = "";
 
-require "connection.php";
 $query =  "select idcategory, name from category";
 $result = mysqli_query($connection, $query);
 
@@ -138,7 +138,7 @@ if (isset($_GET["id"])) {
 
 <body>
 
-  <?php include "header.php"; ?>
+  <?php include "./components/header.php"; ?>
 
   <div class='container'>
 
@@ -197,7 +197,7 @@ if (isset($_GET["id"])) {
   </div>
 
   <!-- Footer -->
-  <?php include "footer.php"; ?>
+  <?php include "./components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

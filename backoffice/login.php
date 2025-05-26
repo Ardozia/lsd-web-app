@@ -8,7 +8,7 @@ $msgType = "";
 
 if (isset($_POST["submit"])) {
 
-  require("connection.php");
+  require("../components/connection.php");
 
   $email = $_POST["useremail"];
   $pwd = $_POST["userpwd"];
@@ -16,8 +16,8 @@ if (isset($_POST["submit"])) {
   $query = "select iduser, role, name, avatar, password 
     from user
     where email = '$email'";
-  
-    // debug
+
+  // debug
   //echo $query;
 
   $result = mysqli_query($connection, $query);
@@ -36,30 +36,30 @@ if (isset($_POST["submit"])) {
     $iduser = $row["iduser"];
     $role = $row["role"];
 
-    // Compare pwd_form with pwd_bd
-    if (md5($pwd) === $pwd_bd) {
-        //login success 
-        //$msg = "Login com sucesso";
-        //$msgType = "success";
+    //encripta pwd do form
+    $salt = "$#_23!az";
 
-        // create session state
-        $_SESSION["email"] = $email;
-        $_SESSION["name"] = $name;
-        $_SESSION["avatar"] = $avatar;
-        $_SESSION["id"] = $iduser;
-        $_SESSION["role"] = $role;
+    $encryptedPwd = hash("sha256", $pwd . $salt);
 
-        Header("Location: main.php");
+    if ($pwd_bd == $encryptedPwd) {
+      // login com suceso
+      //echo "Login com sucesso";
 
+      // cria informação de sessão
+      $_SESSION["name"] = $name;
+      $_SESSION["email"] = $email;
+      $_SESSION["avatar"] = $avatar;
+      $_SESSION["id"] = $iduser;
+      $_SESSION["role"] = $role;
+
+      Header("Location: ../main.php");
     } else {
-      // login fail
-      $msg = "Email ou password inválidos";
+      // login sem sucesso
+      //echo "Erro no login";
+      $msg = "Email ou password inválidas";
       $msgType = "danger";
     }
   }
-
-
-
 }
 
 
@@ -97,28 +97,28 @@ if (isset($_POST["submit"])) {
 
         <div class="card p-3">
 
-        <div class="alert alert-<?php echo $msgType; ?>" role="alert">
+          <div class="alert alert-<?php echo $msgType; ?>" role="alert">
             <?php echo $msg; ?>
-        </div>
-        <div>
+          </div>
+          <div>
             <p class="fs-1">Welcome to Nexio</p>
             <p class="fs-6">Please login</p>
-        </div>
-        <form method="post" enctype="multipart/form-data">
+          </div>
+          <form method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Email address</label>
-                <input type="email" class="form-control" name= "useremail" id="useremail" aria-describedby="emailHelp" value="<?php echo $email; ?>">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" class="form-control" name="useremail" id="useremail" aria-describedby="emailHelp" value="<?php echo $email; ?>">
             </div>
             <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" name="userpwd" id="userpwd" value="<?php echo $pwd; ?>">
-               
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control" name="userpwd" id="userpwd" value="<?php echo $pwd; ?>">
+
             </div>
             <div id="emailHelp" class="form-text">Don't have an account? Create one <a href="signup.php">here</a></div>
-           
+
             <button name="submit" type="submit" class="btn btn-primary my-3">Submit</button>
-            </form>
-         
+          </form>
+
         </div>
 
       </div>
