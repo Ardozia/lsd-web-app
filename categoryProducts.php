@@ -34,11 +34,16 @@ if (isset($_GET["categoryId"])) {
 
 <?php
 foreach ($result as $product) {
+    if (substr($product["photos"], 0, 4) == 'http') {
+            $targetDir = "";
+          } else {
+            $targetDir = "./images/products/";
+          }
 
 ?>
     <div class="col">
         <div class="card ">
-            <img src="<?php echo $product["photos"]; ?>" class="card-img-top" alt="...">
+            <img src="<?php echo $targetDir.$product["photos"]; ?>" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title"><?php echo $product["pname"]; ?></h5>
                 <p class="badge text-bg-secondary"><?php echo $product["cname"]; ?></p>

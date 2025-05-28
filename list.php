@@ -2,6 +2,8 @@
 require("./components/auth.php");
 require("./components/connection.php");
 
+$targetDir = "./images/products/";
+
 $query = "select idproduct,
 	product.name name, 
     photos, 
@@ -47,7 +49,8 @@ $results = mysqli_query($connection, $query);
 
         echo "<div class='col'>";
         echo "  <p class='fs-6'><a href='productDetail.php?id=$id'>$name</a></p>";
-        echo "  <img src='$image' />";
+        echo $targetDir.$image;
+        echo "  <img src='$targetDir$image' />";
         echo "  <p>$price € ($price_vat €)</p>";
         echo "  <p class='badge bg-secondary'>$category</p>";
         echo "</div>";

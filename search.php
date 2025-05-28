@@ -2,6 +2,8 @@
 require "./components/auth.php";
 require "./components/connection.php";
 
+$pageName = 'search';
+
 $noresults = false;
 $msgType = "";
 
@@ -43,6 +45,7 @@ if (isset($_GET["submit"])) {
   <title>Bootstrap demo</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styles.css" >  
 </head>
 
 <body class="vh-100 d-flex flex-column justify-content-between">
@@ -73,12 +76,17 @@ if (isset($_GET["submit"])) {
       <!-- PHP para criar um ciclo de impressão de produtos -->
       <?php
       foreach ($result as $product) {
-
+          
+        if (substr($product["photos"], 0, 4) == 'http') {
+            $targetDir = "";
+          } else {
+            $targetDir = "./images/products/";
+          }
       ?>
 
         <div class="col">
           <div class="card" style="">
-            <img src="<?php echo $product["photos"]; ?>" class="card-img-top" alt="...">
+            <img src="<?php echo $targetDir.$product["photos"]; ?>" class="card-img-top" alt="...">
             <div class="card-body">
               <h5 class="card-title"><?php echo $product["pname"]; ?></h5>
               <p class="badge text-bg-secondary"><?php echo $product["cname"]; ?></p>

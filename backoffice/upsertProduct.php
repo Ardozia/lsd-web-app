@@ -1,14 +1,15 @@
 <?php
-require "./components/auth.php";
-require "./components/connection.php";
+require "../components/auth.php";
+require "../components/connection.php";
 
-$targetDir = "./images/products/";
+$targetDir = "../images/products/";
 $idproduct = 0;
+$available = 1;
 
 $name = "";
 $price = "";
 $category = "";
-$image = "./images/default-image.jpg";
+$image = "default-image.jpg";
 
 $msg = "";
 $msgType = "";
@@ -23,7 +24,7 @@ if (isset($_POST["submit"])) {
   $category = mysqli_real_escape_string($connection, $_POST["prodcategory"]);
   $idproduct = mysqli_real_escape_string($connection, $_POST["prodid"]);
   $image = mysqli_real_escape_string($connection, $_POST["prodImageUpdate"]);
-
+  $available = mysqli_real_escape_string($connection, $_POST["prodavailable2"]);
   // Ler product image
   if (isset($_FILES["prodimage"])) {
     if ($_FILES["prodimage"]["tmp_name"] !== "") {
@@ -44,8 +45,8 @@ if (isset($_POST["submit"])) {
         $check = move_uploaded_file($_FILES["prodimage"]["tmp_name"], $target_file);
 
         if ($check) {
-          // upload ok
-          $image = $target_file;
+          // saves only image name to database
+          $image = $idproduct . "-" . basename($_FILES["prodimage"]["name"]);
         } else {
           $msgType = "danger";
           $msg = "Erro ao carregar imagem";
@@ -63,7 +64,8 @@ if (isset($_POST["submit"])) {
                 name = '$name',
                 price = $price,
                 category_idcategory = $category,
-                photos = '$image'
+                photos = '$image',
+                available = $available
                 where idproduct = $idproduct";
 
       mysqli_query($connection, $query);
@@ -106,7 +108,7 @@ if (isset($_GET["id"])) {
 
   $idproduct = $_GET["id"];
   // query db for product id
-  $query = "select name, price, category_idcategory, photos
+  $query = "select name, price, category_idcategory, photos, available
     from product where idproduct = $idproduct";
   $resultProduct = mysqli_query($connection, $query);
   $product = mysqli_fetch_assoc($resultProduct);
@@ -114,7 +116,18 @@ if (isset($_GET["id"])) {
   $price = $product["price"];
   $category = $product["category_idcategory"];
   $image = $product["photos"];
+  $available = $product["available"];
+
+  if (substr($image, 0, 4) == 'http') {
+    $targetDir = "";
+  } else {
+    $targetDir = "../images/products/";
+  }
+
+
 }
+
+
 
 ?>
 
@@ -138,7 +151,7 @@ if (isset($_GET["id"])) {
 
 <body>
 
-  <?php include "./components/header.php"; ?>
+  <?php include "../components/header.php"; ?>
 
   <div class='container'>
 
@@ -148,7 +161,7 @@ if (isset($_GET["id"])) {
 
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="main.php">Main</a></li>
+        <li class="breadcrumb-item"><a href="manage_products.php">Produtos</a></li>
         <li class="breadcrumb-item active" aria-current="page">Novo produto</li>
       </ol>
     </nav>
@@ -179,10 +192,21 @@ if (isset($_GET["id"])) {
               ?>
             </select>
           </div>
+           <div class="mb-3">
+            <label for="prodavailable" class="form-label">Disponível</label>
+            <input type="number" step="1" id="prodavailable" name="prodavailable" class="form-control" required value="<?php echo $available; ?>" />
+          </div>
+          <div class="mb-3">
+            <label for="prodavailable2" class="form-label">Estado</label>
+            <select class="form-select" name="prodavailable2">
+              <option <?php  if ($available == 1) echo "selected"; ?> value='1'>Ativo</option>
+              <option <?php  if ($available == 0) echo "selected"; ?> value='0'>Inativo</option>
+            </select>
+          </div>
         </div>
         <div class="col-md">
           <input type="hidden" name="prodImageUpdate" value="<?php echo $image; ?>" />
-          <img class="prodimage img-fluid" src="<?php echo $image; ?>" />
+          <img class="prodimage img-fluid" src="<?php echo $targetDir.$image; ?>" />
           <input type="file" class="form-control" name="prodimage" onchange="readImage(this);" />
         </div>
       </div>
@@ -197,7 +221,7 @@ if (isset($_GET["id"])) {
   </div>
 
   <!-- Footer -->
-  <?php include "./components/footer.php"; ?>
+  <?php include "../components/footer.php"; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

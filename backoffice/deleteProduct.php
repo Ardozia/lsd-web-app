@@ -1,6 +1,6 @@
 <?php
-require("auth.php");
-require("config.php");
+require("../components/auth.php");
+require("../components/connection.php");
 
 $role = $_SESSION["role"];
 if (isset($_GET["id"]) && $role == "admin") {
@@ -11,6 +11,8 @@ if (isset($_GET["id"]) && $role == "admin") {
     $result = mysqli_query($connection, $query);
 
     if ($result) {
-        Header("Location: manage_products.php");
+        Header("Location: manage_products.php?msg=Produto inativado&type=success");
+    } else {
+        Header("Location: manage_products.php?msg=Erro ao inativar produto&type=danger");
     }
 }

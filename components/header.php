@@ -26,18 +26,18 @@ if (basename(dirname($_SERVER['SCRIPT_NAME'])) === 'backoffice') {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 w-100">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="<?php echo $base_path; ?>/main.php">Lista</a>
+            <a class="nav-link <?php if($pageName == 'main') echo 'menuSelected' ?>" aria-current="page" href="<?php echo $base_path; ?>/main.php">Lista</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="<?php echo $base_path; ?>/search.php">Pesquisa</a>
+            <a class="nav-link <?php if($pageName == 'search') echo 'menuSelected' ?>  " href="<?php echo $base_path; ?>/search.php">Pesquisa</a>
           </li>
           <li class="nav-item me-auto">
-            <a class="nav-link" href="<?php echo $base_path; ?>/category.php">Categorias</a>
+            <a class="nav-link <?php if($pageName == 'category') echo 'menuSelected' ?> " href="<?php echo $base_path; ?>/category.php">Categorias</a>
           </li>
           <?php if (isset($role) && $role == "admin") { ?>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img class="rounded-circle" style="object-fit: cover; width:30px; height:30px;" src="<?php echo $avatar; ?>" />
+                <img class="rounded-circle" style="object-fit: cover; width:30px; height:30px;" src="<?php echo $base_path.$avatar; ?>" />
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="<?php echo $base_path; ?>/backoffice/profile.php"><?php echo $username; ?></a></li>
